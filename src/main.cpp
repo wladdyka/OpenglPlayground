@@ -19,28 +19,8 @@ const float toRadians = 3.14159265f / 180.0f;
 std::vector<Mesh*> meshes;
 std::vector<Shader*> shaders;
 
-GLuint mShaderId, modelMatrixUniformVarId, projectionMatrixUniformVarId;
-
-// vertex shader
-static const char* vertexShaderSource = ""
-"#version 330\n"
-"layout (location = 0) in vec3 pos;\n"
-"out vec4 vertexColor;\n"
-"uniform mat4 modelMatrix;\n"
-"uniform mat4 projectionMatrix;\n"
-"void main() {\n"
-"gl_Position = projectionMatrix * modelMatrix * vec4(pos, 1.0);\n"
-"vertexColor = vec4(clamp(pos, 0.0f, 1.0f), 1.0f);"
-"}";
-
-// fragment shader
-static const char* fragmentShaderSource = ""
-"#version 330\n"
-"in vec4 vertexColor;\n"
-"out vec4 color;\n"
-"void main() {\n"
-"color = vertexColor;\n"
-"}";
+const char* vertexPath = "shaders/vertex.glsl";
+const char* fragmentPath = "shaders/fragment.glsl";
 
 void CreateObjects() {
     unsigned int indices[] = {
@@ -68,7 +48,7 @@ void CreateObjects() {
 
 void CreateShaders() {
     auto *shader1 = new Shader();
-    shader1->CreateFromString(vertexShaderSource, fragmentShaderSource);
+    shader1->CreateFromFiles(vertexPath, fragmentPath);
     shaders.push_back(shader1);
 }
 

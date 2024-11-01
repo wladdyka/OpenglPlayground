@@ -7,20 +7,23 @@
 #include <GL/glew.h>
 
 class Shader {
-    public:
-        Shader();
-        ~Shader();
+public:
+    Shader();
+    ~Shader();
 
-        void CreateFromString(const char* vertexCode, const char* fragmentCode);
-        GLuint GetProjectionLocation();
-        GLuint GetModelLocation();
+    void CreateFromString(const char* vertexCode, const char* fragmentCode);
+    void CreateFromFiles(const char* vertexPath, const char* fragmentPath);
+    GLuint GetProjectionLocation();
+    GLuint GetModelLocation();
 
-        void UseShader();
-        void ClearShader();
+    std::string ReadFile(const char* fileName);
 
-    private:
-        GLuint mShaderId, uniformProjectionId, uniformModelId;
+    void UseShader();
+    void ClearShader();
 
-        void CompileShader(const char* vertexCode, const char* fragmentCode);
-        void AddShader(GLuint program, const char* shaderCode, GLenum shaderType);
+private:
+    GLuint mShaderId, uniformProjectionId, uniformModelId;
+
+    void CompileShader(const char* vertexCode, const char* fragmentCode);
+    void AddShader(GLuint program, const char* shaderCode, GLenum shaderType);
 };

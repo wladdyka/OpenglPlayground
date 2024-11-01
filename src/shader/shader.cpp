@@ -15,12 +15,35 @@ void Shader::CreateFromString(const char *vertexCode, const char *fragmentCode) 
     CompileShader(vertexCode, fragmentCode);
 }
 
+void Shader::CreateFromFiles(const char *vertexPath, const char *fragmentPath) {
+    CompileShader(ReadFile(vertexPath).c_str(), ReadFile(fragmentPath).c_str());
+}
+
 GLuint Shader::GetProjectionLocation() {
     return uniformProjectionId;
 }
 
 GLuint Shader::GetModelLocation() {
     return uniformModelId;
+}
+
+std::string Shader::ReadFile(const char *fileName) {
+    std::string content;
+    std::ifstream fileStream(fileName, std::ios::in);
+
+    if (!fileStream.is_open()) {
+        printf("Failed to open file %s\n", fileName);
+        return "";
+    }
+
+    std::string line = "";
+    while(!fileStream.eof()) {
+        std::getline(fileStream, line);
+        content.append(line + "\n");
+    }
+
+    fileStream.close();
+    return content;
 }
 
 void Shader::UseShader() {
