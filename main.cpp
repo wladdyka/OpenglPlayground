@@ -14,27 +14,24 @@ const float toRadians = 3.14159265f / 180.0f;
 
 GLuint vaoId, vboId, mShaderId, modelMatrixUniformVarId;
 
-bool isDirectionRight = true;
-float triangleOffset = 0.0f;
-float triangleMaxOffset = 0.7f;
-float triangleStepIncrement = 0.005f;
-float currentAngle = 0.0f;
-
 // vertex shader
 static const char* vertexShaderSource = ""
 "#version 330\n"
 "layout (location = 0) in vec3 pos;\n"
+"out vec4 vertexColor;\n"
 "uniform mat4 modelMatrix;\n"
 "void main() {\n"
-"gl_Position = modelMatrix * vec4(pos.x, pos.y, pos.z, 1.0);\n"
+"gl_Position = modelMatrix * vec4(pos, 1.0);\n"
+"vertexColor = vec4(clamp(pos, 0.0f, 1.0f), 1.0f);"
 "}";
 
 // fragment shader
 static const char* fragmentShaderSource = ""
 "#version 330\n"
+"in vec4 vertexColor;\n"
 "out vec4 color;\n"
 "void main() {\n"
-"color = vec4(1.0, 0.0, 0.0, 1.0);\n"
+"color = vertexColor;\n"
 "}";
 
 void AddShader(GLuint program, const char* shaderCode, GLenum shaderType) {
@@ -173,18 +170,6 @@ int main() {
         // get and handle user input events
         glfwPollEvents();
 
-        if (isDirectionRight) {
-            triangleOffset += triangleStepIncrement;
-        } else {
-            triangleOffset -= triangleStepIncrement;
-        }
-
-        if (abs(triangleOffset) > triangleMaxOffset) {
-            isDirectionRight = !isDirectionRight;
-        }
-
-        currentAngle += 0.5f;
-
         // clear window
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -193,7 +178,8 @@ int main() {
 
         glm::mat4 modelMatrix = glm::mat4(1.0f);
         // modelMatrix = glm::translate(modelMatrix, glm::vec3(triangleOffset, 0.0f, 0.0f));
-        modelMatrix = glm::rotate(modelMatrix, currentAngle * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+        // modelMatrix = glm::rotate(modelMatrix, currentAngle * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+        modelMatrix = glm::scale(modelMatrix, glm::vec3(0.4f, 0.4f, 0.5f));
 
         glUniformMatrix4fv(modelMatrixUniformVarId, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
