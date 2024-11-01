@@ -10,6 +10,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 const GLint WIDTH = 800, HEIGHT = 600;
+const float toRadians = 3.14159265f / 180.0f;
 
 GLuint vaoId, vboId, mShaderId, modelMatrixUniformVarId;
 
@@ -17,6 +18,7 @@ bool isDirectionRight = true;
 float triangleOffset = 0.0f;
 float triangleMaxOffset = 0.7f;
 float triangleStepIncrement = 0.005f;
+float currentAngle = 0.0f;
 
 // vertex shader
 static const char* vertexShaderSource = ""
@@ -81,13 +83,20 @@ void CompileShaders() {
         return;
     }
 
+    // Bind a temporary VAO for validation
+    GLuint tempVao;
+    glGenVertexArrays(1, &tempVao);
+    glBindVertexArray(tempVao);
+
     glValidateProgram(mShaderId);
     glGetProgramiv(mShaderId, GL_VALIDATE_STATUS, &result);
     if (!result) {
         glGetProgramInfoLog(mShaderId, sizeof(errorLog), nullptr, errorLog);
         printf("Error validating program: %s\n", errorLog);
-        return;
     }
+
+    glBindVertexArray(0); // Unbind the temporary VAO
+    glDeleteVertexArrays(1, &tempVao); // Delete the temporary VAO
 
     modelMatrixUniformVarId = glGetUniformLocation(mShaderId, "modelMatrix");
 }
@@ -174,18 +183,21 @@ int main() {
             isDirectionRight = !isDirectionRight;
         }
 
+        currentAngle += 0.5f;
+
         // clear window
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        glBindVertexArray(vaoId);
 
         glUseProgram(mShaderId);
 
         glm::mat4 modelMatrix = glm::mat4(1.0f);
-        modelMatrix = glm::translate(modelMatrix, glm::vec3(triangleOffset, 0.0f, 0.0f));
+        // modelMatrix = glm::translate(modelMatrix, glm::vec3(triangleOffset, 0.0f, 0.0f));
+        modelMatrix = glm::rotate(modelMatrix, currentAngle * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
 
         glUniformMatrix4fv(modelMatrixUniformVarId, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
+        glBindVertexArray(vaoId);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glBindVertexArray(0);
