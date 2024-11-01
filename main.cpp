@@ -12,7 +12,7 @@
 const GLint WIDTH = 800, HEIGHT = 600;
 const float toRadians = 3.14159265f / 180.0f;
 
-GLuint vaoId, vboId, mShaderId, modelMatrixUniformVarId;
+GLuint vaoId, vboId, iboId, mShaderId, modelMatrixUniformVarId;
 
 // vertex shader
 static const char* vertexShaderSource = ""
@@ -99,14 +99,26 @@ void CompileShaders() {
 }
 
 void CreateTriangle() {
+    unsigned int indices[] = {
+        0, 3, 1,
+        1, 3, 2,
+        2, 3, 0,
+        0, 1, 2
+    };
+
     GLfloat vertices[] = {
       -1.0f, -1.0f, 0.0f,
-      1.0f, -1.0f, 0.0f,
-      0.0f,  1.0f, 0.0f,
+       0.0f, -1.0f, 1.0f,
+       1.0f, -1.0f, 0.0f,
+       0.0f,  1.0f, 0.0f,
     };
 
     glGenVertexArrays(1, &vaoId);
     glBindVertexArray(vaoId);
+
+    glGenBuffers(1, &iboId);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     glGenBuffers(1, &vboId);
     glBindBuffer(GL_ARRAY_BUFFER, vboId);
@@ -117,6 +129,7 @@ void CreateTriangle() {
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 int main() {
@@ -159,6 +172,8 @@ int main() {
         return 1;
     }
 
+    glEnable(GL_DEPTH_TEST);
+
     // setup viewport size
     glViewport(0, 0, bufferWidth, bufferHeight);
 
@@ -172,20 +187,23 @@ int main() {
 
         // clear window
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glUseProgram(mShaderId);
 
         glm::mat4 modelMatrix = glm::mat4(1.0f);
         // modelMatrix = glm::translate(modelMatrix, glm::vec3(triangleOffset, 0.0f, 0.0f));
-        // modelMatrix = glm::rotate(modelMatrix, currentAngle * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+        modelMatrix = glm::rotate(modelMatrix, toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
         modelMatrix = glm::scale(modelMatrix, glm::vec3(0.4f, 0.4f, 0.5f));
 
         glUniformMatrix4fv(modelMatrixUniformVarId, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
         glBindVertexArray(vaoId);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
 
+        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
         glUseProgram(0);
 
