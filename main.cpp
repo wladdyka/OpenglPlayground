@@ -12,7 +12,7 @@
 const GLint WIDTH = 800, HEIGHT = 600;
 const float toRadians = 3.14159265f / 180.0f;
 
-GLuint vaoId, vboId, iboId, mShaderId, modelMatrixUniformVarId;
+GLuint vaoId, vboId, iboId, mShaderId, modelMatrixUniformVarId, projectionMatrixUniformVarId;
 
 // vertex shader
 static const char* vertexShaderSource = ""
@@ -20,8 +20,9 @@ static const char* vertexShaderSource = ""
 "layout (location = 0) in vec3 pos;\n"
 "out vec4 vertexColor;\n"
 "uniform mat4 modelMatrix;\n"
+"uniform mat4 projectionMatrix;\n"
 "void main() {\n"
-"gl_Position = modelMatrix * vec4(pos, 1.0);\n"
+"gl_Position = projectionMatrix * modelMatrix * vec4(pos, 1.0);\n"
 "vertexColor = vec4(clamp(pos, 0.0f, 1.0f), 1.0f);"
 "}";
 
@@ -96,6 +97,7 @@ void CompileShaders() {
     glDeleteVertexArrays(1, &tempVao); // Delete the temporary VAO
 
     modelMatrixUniformVarId = glGetUniformLocation(mShaderId, "modelMatrix");
+    projectionMatrixUniformVarId = glGetUniformLocation(mShaderId, "projectionMatrix");
 }
 
 void CreateTriangle() {
@@ -180,6 +182,8 @@ int main() {
     CreateTriangle();
     CompileShaders();
 
+    glm::mat4 projectionMatrix = glm::perspective(45.0f, (GLfloat)bufferWidth / (GLfloat)bufferHeight, 0.1f, 100.0f);
+
     // loop until window closed
     while(!glfwWindowShouldClose(mainWindow)) {
         // get and handle user input events
@@ -192,11 +196,12 @@ int main() {
         glUseProgram(mShaderId);
 
         glm::mat4 modelMatrix = glm::mat4(1.0f);
-        // modelMatrix = glm::translate(modelMatrix, glm::vec3(triangleOffset, 0.0f, 0.0f));
+        modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -5.0f));
         modelMatrix = glm::rotate(modelMatrix, toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
         modelMatrix = glm::scale(modelMatrix, glm::vec3(0.4f, 0.4f, 0.5f));
 
         glUniformMatrix4fv(modelMatrixUniformVarId, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+        glUniformMatrix4fv(projectionMatrixUniformVarId, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
         glBindVertexArray(vaoId);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
