@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <cmath>
+#include <vector>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -9,10 +10,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "mesh/mesh.h"
+
 const GLint WIDTH = 800, HEIGHT = 600;
 const float toRadians = 3.14159265f / 180.0f;
 
-GLuint vaoId, vboId, iboId, mShaderId, modelMatrixUniformVarId, projectionMatrixUniformVarId;
+std::vector<Mesh*> meshes;
+
+GLuint mShaderId, modelMatrixUniformVarId, projectionMatrixUniformVarId;
 
 // vertex shader
 static const char* vertexShaderSource = ""
@@ -115,23 +120,9 @@ void CreateTriangle() {
        0.0f,  1.0f, 0.0f,
     };
 
-    glGenVertexArrays(1, &vaoId);
-    glBindVertexArray(vaoId);
-
-    glGenBuffers(1, &iboId);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    glGenBuffers(1, &vboId);
-    glBindBuffer(GL_ARRAY_BUFFER, vboId);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    Mesh *obj1 = new Mesh();
+    obj1->CreateMesh(vertices, indices, 12, 12);
+    meshes.push_back(obj1);
 }
 
 int main() {
@@ -203,13 +194,10 @@ int main() {
         glUniformMatrix4fv(modelMatrixUniformVarId, 1, GL_FALSE, glm::value_ptr(modelMatrix));
         glUniformMatrix4fv(projectionMatrixUniformVarId, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
-        glBindVertexArray(vaoId);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iboId);
+        for (auto mesh : meshes) {
+         mesh->RenderMesh();
+        }
 
-        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
         glUseProgram(0);
 
         glfwSwapBuffers(mainWindow);
