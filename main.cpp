@@ -5,9 +5,13 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 const GLint WIDTH = 800, HEIGHT = 600;
 
-GLuint vaoId, vboId, mShaderId, xMoveUniformVariableId;
+GLuint vaoId, vboId, mShaderId, modelMatrixUniformVarId;
 
 bool isDirectionRight = true;
 float triangleOffset = 0.0f;
@@ -18,9 +22,9 @@ float triangleStepIncrement = 0.005f;
 static const char* vertexShaderSource = ""
 "#version 330\n"
 "layout (location = 0) in vec3 pos;\n"
-"uniform float xMove;\n"
+"uniform mat4 modelMatrix;\n"
 "void main() {\n"
-"gl_Position = vec4(0.4 * pos.x + xMove, 0.4 * pos.y, pos.z, 1.0);\n"
+"gl_Position = modelMatrix * vec4(pos.x, pos.y, pos.z, 1.0);\n"
 "}";
 
 // fragment shader
@@ -85,7 +89,7 @@ void CompileShaders() {
         return;
     }
 
-    xMoveUniformVariableId = glGetUniformLocation(mShaderId, "xMove");
+    modelMatrixUniformVarId = glGetUniformLocation(mShaderId, "modelMatrix");
 }
 
 void CreateTriangle() {
@@ -176,7 +180,11 @@ int main() {
         glBindVertexArray(vaoId);
 
         glUseProgram(mShaderId);
-        glUniform1f(xMoveUniformVariableId, triangleOffset);
+
+        glm::mat4 modelMatrix = glm::mat4(1.0f);
+        modelMatrix = glm::translate(modelMatrix, glm::vec3(triangleOffset, 0.0f, 0.0f));
+
+        glUniformMatrix4fv(modelMatrixUniformVarId, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
