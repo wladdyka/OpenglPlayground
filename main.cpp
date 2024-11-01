@@ -6,7 +6,78 @@
 
 const GLint WIDTH = 800, HEIGHT = 600;
 
-GLuint vaoId, vboId, shaderId;
+GLuint vaoId, vboId, mShaderId;
+
+// vertex shader
+static const char* vertexShaderSource = ""
+"#version 330\n"
+"layout (location = 0) in vec3 pos;\n"
+"void main() {\n"
+"gl_Position = vec4(0.4 * pos.x, 0.4 * pos.y, pos.z, 1.0);\n"
+"}";
+
+// fragment shader
+static const char* fragmentShaderSource = ""
+"#version 330\n"
+"out vec4 color;\n"
+"void main() {\n"
+"color = vec4(1.0, 0.0, 0.0, 1.0);\n"
+"}";
+
+void AddShader(GLuint program, const char* shaderCode, GLenum shaderType) {
+    GLuint shaderId = glCreateShader(shaderType);
+
+    const GLchar* code[1];
+    code[0] = shaderCode;
+
+    GLint codeLength[1];
+    codeLength[0] = strlen(shaderCode);
+
+    glShaderSource(shaderId, 1, code, codeLength);
+    glCompileShader(shaderId);
+
+    GLint result = 0;
+    GLchar errorLog[1024] = {0};
+
+    glGetShaderiv(shaderId, GL_COMPILE_STATUS, &result);
+    if (!result) {
+        glGetShaderInfoLog(shaderId, sizeof(errorLog), nullptr, errorLog);
+        printf("Error compiling shader: %s\n", errorLog);
+        return;
+    }
+
+    glAttachShader(program, shaderId);
+}
+
+void CompileShaders() {
+    mShaderId = glCreateProgram();
+    if (!mShaderId) {
+        printf("Error creating shader program\n");
+        return;
+    }
+
+    AddShader(mShaderId, vertexShaderSource, GL_VERTEX_SHADER);
+    AddShader(mShaderId, fragmentShaderSource, GL_FRAGMENT_SHADER);
+
+    GLint result = 0;
+    GLchar errorLog[1024] = {0};
+
+    glLinkProgram(mShaderId);
+    glGetProgramiv(mShaderId, GL_LINK_STATUS, &result);
+    if (!result) {
+        glGetProgramInfoLog(mShaderId, sizeof(errorLog), nullptr, errorLog);
+        printf("Error linking program: %s\n", errorLog);
+        return;
+    }
+
+    glValidateProgram(mShaderId);
+    glGetProgramiv(mShaderId, GL_VALIDATE_STATUS, &result);
+    if (!result) {
+        glGetProgramInfoLog(mShaderId, sizeof(errorLog), nullptr, errorLog);
+        printf("Error validating program: %s\n", errorLog);
+        return;
+    }
+}
 
 void CreateTriangle() {
     GLfloat vertices[] = {
@@ -72,14 +143,25 @@ int main() {
     // setup viewport size
     glViewport(0, 0, bufferWidth, bufferHeight);
 
+    CreateTriangle();
+    CompileShaders();
+
     // loop until window closed
     while(!glfwWindowShouldClose(mainWindow)) {
         // get and handle user input events
         glfwPollEvents();
 
         // clear window
-        glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        glUseProgram(mShaderId);
+        glBindVertexArray(vaoId);
+
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        glBindVertexArray(0);
+        glUseProgram(0);
 
         glfwSwapBuffers(mainWindow);
     }
