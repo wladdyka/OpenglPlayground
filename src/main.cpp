@@ -11,11 +11,13 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "mesh/mesh.h"
+#include "shader/shader.h"
 
 const GLint WIDTH = 800, HEIGHT = 600;
 const float toRadians = 3.14159265f / 180.0f;
 
 std::vector<Mesh*> meshes;
+std::vector<Shader*> shaders;
 
 GLuint mShaderId, modelMatrixUniformVarId, projectionMatrixUniformVarId;
 
@@ -40,72 +42,7 @@ static const char* fragmentShaderSource = ""
 "color = vertexColor;\n"
 "}";
 
-void AddShader(GLuint program, const char* shaderCode, GLenum shaderType) {
-    GLuint shaderId = glCreateShader(shaderType);
-
-    const GLchar* code[1];
-    code[0] = shaderCode;
-
-    GLint codeLength[1];
-    codeLength[0] = strlen(shaderCode);
-
-    glShaderSource(shaderId, 1, code, codeLength);
-    glCompileShader(shaderId);
-
-    GLint result = 0;
-    GLchar errorLog[1024] = {0};
-
-    glGetShaderiv(shaderId, GL_COMPILE_STATUS, &result);
-    if (!result) {
-        glGetShaderInfoLog(shaderId, sizeof(errorLog), nullptr, errorLog);
-        printf("Error compiling shader: %s\n", errorLog);
-        return;
-    }
-
-    glAttachShader(program, shaderId);
-}
-
-void CompileShaders() {
-    mShaderId = glCreateProgram();
-    if (!mShaderId) {
-        printf("Error creating shader program\n");
-        return;
-    }
-
-    AddShader(mShaderId, vertexShaderSource, GL_VERTEX_SHADER);
-    AddShader(mShaderId, fragmentShaderSource, GL_FRAGMENT_SHADER);
-
-    GLint result = 0;
-    GLchar errorLog[1024] = {0};
-
-    glLinkProgram(mShaderId);
-    glGetProgramiv(mShaderId, GL_LINK_STATUS, &result);
-    if (!result) {
-        glGetProgramInfoLog(mShaderId, sizeof(errorLog), nullptr, errorLog);
-        printf("Error linking program: %s\n", errorLog);
-        return;
-    }
-
-    // Bind a temporary VAO for validation
-    GLuint tempVao;
-    glGenVertexArrays(1, &tempVao);
-    glBindVertexArray(tempVao);
-
-    glValidateProgram(mShaderId);
-    glGetProgramiv(mShaderId, GL_VALIDATE_STATUS, &result);
-    if (!result) {
-        glGetProgramInfoLog(mShaderId, sizeof(errorLog), nullptr, errorLog);
-        printf("Error validating program: %s\n", errorLog);
-    }
-
-    glBindVertexArray(0); // Unbind the temporary VAO
-    glDeleteVertexArrays(1, &tempVao); // Delete the temporary VAO
-
-    modelMatrixUniformVarId = glGetUniformLocation(mShaderId, "modelMatrix");
-    projectionMatrixUniformVarId = glGetUniformLocation(mShaderId, "projectionMatrix");
-}
-
-void CreateTriangle() {
+void CreateObjects() {
     unsigned int indices[] = {
         0, 3, 1,
         1, 3, 2,
@@ -120,9 +57,19 @@ void CreateTriangle() {
        0.0f,  1.0f, 0.0f,
     };
 
-    Mesh *obj1 = new Mesh();
+    auto *obj1 = new Mesh();
     obj1->CreateMesh(vertices, indices, 12, 12);
     meshes.push_back(obj1);
+
+    auto *obj2 = new Mesh();
+    obj2->CreateMesh(vertices, indices, 12, 12);
+    meshes.push_back(obj2);
+}
+
+void CreateShaders() {
+    auto *shader1 = new Shader();
+    shader1->CreateFromString(vertexShaderSource, fragmentShaderSource);
+    shaders.push_back(shader1);
 }
 
 int main() {
@@ -170,8 +117,8 @@ int main() {
     // setup viewport size
     glViewport(0, 0, bufferWidth, bufferHeight);
 
-    CreateTriangle();
-    CompileShaders();
+    CreateObjects();
+    CreateShaders();
 
     glm::mat4 projectionMatrix = glm::perspective(45.0f, (GLfloat)bufferWidth / (GLfloat)bufferHeight, 0.1f, 100.0f);
 
@@ -184,19 +131,25 @@ int main() {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glUseProgram(mShaderId);
+        shaders[0]->UseShader();
 
         glm::mat4 modelMatrix = glm::mat4(1.0f);
-        modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -5.0f));
-        modelMatrix = glm::rotate(modelMatrix, toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-        modelMatrix = glm::scale(modelMatrix, glm::vec3(0.4f, 0.4f, 0.5f));
+        modelMatrix = glm::translate(modelMatrix, glm::vec3(1.0f, 0.0f, -5.0f));
+        // modelMatrix = glm::rotate(modelMatrix, toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+        // modelMatrix = glm::scale(modelMatrix, glm::vec3(0.4f, 0.4f, 0.5f));
 
-        glUniformMatrix4fv(modelMatrixUniformVarId, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-        glUniformMatrix4fv(projectionMatrixUniformVarId, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+        glUniformMatrix4fv(shaders[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(modelMatrix));
+        glUniformMatrix4fv(shaders[0]->GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
-        for (auto mesh : meshes) {
-         mesh->RenderMesh();
-        }
+        meshes[0]->RenderMesh();
+
+        modelMatrix = glm::mat4(1.0f);
+        modelMatrix = glm::translate(modelMatrix, glm::vec3(-1.0f, 0.0f, -5.0f));
+
+        glUniformMatrix4fv(shaders[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(modelMatrix));
+        glUniformMatrix4fv(shaders[0]->GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+
+        meshes[1]->RenderMesh();
 
         glUseProgram(0);
 
