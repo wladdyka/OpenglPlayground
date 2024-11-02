@@ -22,6 +22,8 @@ std::vector<Mesh*> meshes;
 std::vector<Shader*> shaders;
 Camera camera;
 
+GLfloat deltaTime = 0.0f, lastTime = 0.0f;
+
 const char* vertexPath = "shaders/vertex.glsl";
 const char* fragmentPath = "shaders/fragment.glsl";
 
@@ -61,7 +63,7 @@ int main() {
     CreateObjects();
     CreateShaders();
 
-    camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, 0.0f, 0.5f, 1.0f);
+    camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 5.0f, 1.0f);
 
     glm::mat4 projectionMatrix = glm::perspective(
         45.0f,
@@ -72,10 +74,14 @@ int main() {
 
     // loop until window closed
     while(!mainWindow.getShouldClose()) {
+        GLfloat now = glfwGetTime();
+        deltaTime = now - lastTime;
+        lastTime = now;
+
         // get and handle user input events
         glfwPollEvents();
 
-        camera.KeyControl(mainWindow.getKeys());
+        camera.KeyControl(mainWindow.getKeys(), deltaTime);
 
         // clear window
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

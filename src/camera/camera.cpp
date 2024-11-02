@@ -8,9 +8,9 @@
 Camera::Camera():
     mPosition{glm::vec3(0.0f, 0.0f, 0.0f)},
     mWorldUp{glm::vec3(0.0f, 1.0f, 0.0f)},
-    mYaw{90.0f},
+    mYaw{-90.0f},
     mPitch{0.0f},
-    mMoveSpeed{0.5f},
+    mMoveSpeed{5.0f},
     mTurnSpeed{1.0f}
 { }
 
@@ -37,21 +37,23 @@ Camera::~Camera() {
 }
 
 
-void Camera::KeyControl(bool *keys) {
+void Camera::KeyControl(bool *keys, GLfloat deltaTime) {
+    GLfloat velocity = mMoveSpeed * deltaTime;
+
     if (keys[GLFW_KEY_W]) {
-        mPosition += mFront * mMoveSpeed;
+        mPosition += mFront * velocity;
     }
 
     if (keys[GLFW_KEY_S]) {
-        mPosition -= mFront * mMoveSpeed;
+        mPosition -= mFront * velocity;
     }
 
     if (keys[GLFW_KEY_A]) {
-        mPosition -= mRight * mMoveSpeed;
+        mPosition -= mRight * velocity;
     }
 
     if (keys[GLFW_KEY_D]) {
-        mPosition += mRight * mMoveSpeed;
+        mPosition += mRight * velocity;
     }
 }
 
