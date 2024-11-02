@@ -1,3 +1,5 @@
+#define STB_IMAGE_IMPLEMENTATION
+
 #include <stdio.h>
 #include <string.h>
 #include <cmath>
@@ -13,6 +15,7 @@
 #include "camera/camera.h"
 #include "mesh/mesh.h"
 #include "shader/shader.h"
+#include "texture/texture.h"
 #include "window/window.h"
 
 const float toRadians = 3.14159265f / 180.0f;
@@ -21,6 +24,9 @@ Window mainWindow = Window();
 std::vector<Mesh*> meshes;
 std::vector<Shader*> shaders;
 Camera camera;
+
+Texture brickTexture;
+Texture dirtTexture;
 
 GLfloat deltaTime = 0.0f, lastTime = 0.0f;
 
@@ -36,18 +42,18 @@ void CreateObjects() {
     };
 
     GLfloat vertices[] = {
-      -1.0f, -1.0f, 0.0f,
-       0.0f, -1.0f, 1.0f,
-       1.0f, -1.0f, 0.0f,
-       0.0f,  1.0f, 0.0f,
+      -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+       0.0f, -1.0f, 1.0f, 0.5f, 0.0f,
+       1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+       0.0f,  1.0f, 0.0f, 0.5f, 1.0f,
     };
 
     auto *obj1 = new Mesh();
-    obj1->CreateMesh(vertices, indices, 12, 12);
+    obj1->CreateMesh(vertices, indices, 20, 12);
     meshes.push_back(obj1);
 
     auto *obj2 = new Mesh();
-    obj2->CreateMesh(vertices, indices, 12, 12);
+    obj2->CreateMesh(vertices, indices, 20, 12);
     meshes.push_back(obj2);
 }
 
@@ -64,6 +70,12 @@ int main() {
     CreateShaders();
 
     camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 5.0f, 0.2f);
+
+    brickTexture = Texture("textures/brick.png");
+    dirtTexture = Texture("textures/dirt.png");
+
+    brickTexture.LoadTexture();
+    dirtTexture.LoadTexture();
 
     glm::mat4 projectionMatrix = glm::perspective(
         45.0f,
@@ -99,6 +111,7 @@ int main() {
         glUniformMatrix4fv(shaders[0]->GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
         glUniformMatrix4fv(shaders[0]->GetViewMatrixLocation(), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
 
+        brickTexture.UseTexture();
         meshes[0]->RenderMesh();
 
         modelMatrix = glm::mat4(1.0f);
@@ -107,6 +120,7 @@ int main() {
         glUniformMatrix4fv(shaders[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(modelMatrix));
         glUniformMatrix4fv(shaders[0]->GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
+        dirtTexture.UseTexture();
         meshes[1]->RenderMesh();
 
         glUseProgram(0);

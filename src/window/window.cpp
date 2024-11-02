@@ -4,8 +4,8 @@
 
 Window::Window()
     : mWindow{},
-    mWidth{800},
-    mHeight{600},
+    mWidth{1920},
+    mHeight{1080},
     keys{false}
 { }
 
@@ -97,11 +97,12 @@ void Window::HandleKeys(GLFWwindow *window, int key, int scancode, int action, i
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
 
-    if (key >= 0 && key < 1024) {
-        theWindow->keys[key] = action == GLFW_PRESS;
-        if (action == GLFW_PRESS) {
-            printf("Pressed key %d\n", key);
-        }
+    if (key >= 0 && key < 1024 && action == GLFW_PRESS) {
+        theWindow->keys[key] = true;
+        printf("Pressed key %d\n", key);
+    } else if (key >= 0 && key < 1024 && action == GLFW_RELEASE) {
+        theWindow->keys[key] = false;
+        printf("Released key %d\n", key);
     }
 }
 
