@@ -13,10 +13,11 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "camera/camera.h"
+#include "light/light.h"
 #include "mesh/mesh.h"
 #include "shader/shader.h"
-#include "texture/texture.h"
 #include "window/window.h"
+#include "texture/texture.h"
 
 const float toRadians = 3.14159265f / 180.0f;
 
@@ -27,6 +28,8 @@ Camera camera;
 
 Texture brickTexture;
 Texture dirtTexture;
+
+Light mainLight;
 
 GLfloat deltaTime = 0.0f, lastTime = 0.0f;
 
@@ -74,6 +77,8 @@ int main() {
     brickTexture = Texture("textures/brick.png");
     dirtTexture = Texture("textures/dirt.png");
 
+    mainLight = Light(1.0f, 1.0f, 1.0f, 0.2f);
+
     brickTexture.LoadTexture();
     dirtTexture.LoadTexture();
 
@@ -101,6 +106,8 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shaders[0]->UseShader();
+
+        mainLight.UseLight(shaders[0]->GetAmbientIntensityLocation(), shaders[0]->GetAmbientColorLocation());
 
         glm::mat4 modelMatrix = glm::mat4(1.0f);
         modelMatrix = glm::translate(modelMatrix, glm::vec3(1.0f, 0.0f, -5.0f));

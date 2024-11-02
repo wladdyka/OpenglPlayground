@@ -32,6 +32,14 @@ GLuint Shader::GetViewMatrixLocation() {
     return uniformViewModelId;
 }
 
+GLuint Shader::GetAmbientIntensityLocation() {
+    return uniformAmbientIntensityId;
+}
+
+GLuint Shader::GetAmbientColorLocation() {
+    return uniformAmbientColorId;
+}
+
 std::string Shader::ReadFile(const char *fileName) {
     std::string content;
     std::ifstream fileStream(fileName, std::ios::in);
@@ -104,6 +112,8 @@ void Shader::CompileShader(const char *vertexCode, const char *fragmentCode) {
     uniformModelId = glGetUniformLocation(mShaderId, "modelMatrix");
     uniformProjectionId = glGetUniformLocation(mShaderId, "projectionMatrix");
     uniformViewModelId = glGetUniformLocation(mShaderId, "viewMatrix");
+    uniformAmbientColorId = glGetUniformLocation(mShaderId, "directionalLight.color");
+    uniformAmbientIntensityId = glGetUniformLocation(mShaderId, "directionalLight.ambientIntensity");
 }
 
 void Shader::AddShader(GLuint program, const char *shaderCode, GLenum shaderType) {
