@@ -5,7 +5,8 @@
 Window::Window()
     : mWindow{},
     mWidth{800},
-    mHeight{600}
+    mHeight{600},
+    keys{false}
 { }
 
 Window::~Window() {
@@ -14,7 +15,8 @@ Window::~Window() {
 }
 
 Window::Window(GLuint width, GLuint height)
-    : mWindow{}
+    : mWindow{},
+    keys{false}
 {
     mWidth = width;
     mHeight = height;
@@ -49,6 +51,10 @@ int Window::Init() {
     // set context for glew to use
     glfwMakeContextCurrent(mWindow);
 
+    // handle key and mouseinput
+    CreateCallbacks();
+    glfwSetInputMode(mWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
     // allow modern extension features
     glewExperimental = GL_TRUE;
 
@@ -63,6 +69,55 @@ int Window::Init() {
 
     // setup viewport size
     glViewport(0, 0, mBufferWidth, mBufferHeight);
+    glfwSetWindowUserPointer(mWindow, this);
 
     return 0;
+}
+
+GLfloat Window::getChangeX() {
+    GLfloat changeX = mChangeX;
+    mChangeX = 0.0f;
+    return changeX;
+}
+
+GLfloat Window::getChangeY() {
+    GLfloat changeY = mChangeY;
+    mChangeY = 0.0f;
+    return changeY;
+}
+
+void Window::CreateCallbacks() {
+    glfwSetKeyCallback(mWindow, HandleKeys);
+    glfwSetCursorPosCallback(mWindow, HandleMouse);
+}
+
+void Window::HandleKeys(GLFWwindow *window, int key, int scancode, int action, int mode) {
+    auto *theWindow = static_cast<Window *>(glfwGetWindowUserPointer(window));
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, GL_TRUE);
+    }
+
+    if (key >= 0 && key < 1024) {
+        theWindow->keys[key] = action == GLFW_PRESS;
+        if (action == GLFW_PRESS) {
+            printf("Pressed key %d\n", key);
+        }
+    }
+}
+
+void Window::HandleMouse(GLFWwindow *window, double xPos, double yPos) {
+    auto *theWindow = static_cast<Window *>(glfwGetWindowUserPointer(window));
+    if (theWindow->mMouseFirstMoved) {
+        theWindow->mLastX = xPos;
+        theWindow->mLastY = yPos;
+        theWindow->mMouseFirstMoved = false;
+    }
+
+    theWindow->mChangeX = xPos - theWindow->mLastX;
+    theWindow->mChangeY = theWindow->mLastY - yPos;
+
+    theWindow->mLastX = xPos;
+    theWindow->mLastY = yPos;
+
+    printf("Mouse moved at (%f, %f)\n", theWindow->mChangeX, theWindow->mChangeY);
 }

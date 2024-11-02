@@ -14,10 +14,9 @@
 #include "shader/shader.h"
 #include "window/window.h"
 
-const GLint WIDTH = 800, HEIGHT = 600;
 const float toRadians = 3.14159265f / 180.0f;
 
-Window mainWindow = Window(WIDTH, HEIGHT);
+Window mainWindow = Window();
 std::vector<Mesh*> meshes;
 std::vector<Shader*> shaders;
 
