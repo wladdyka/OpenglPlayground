@@ -3,7 +3,8 @@
 Shader::Shader()
     : mShaderId{0},
     uniformModelId{0},
-    uniformProjectionId{0}
+    uniformProjectionId{0},
+    uniformViewModelId{0}
 {
 }
 
@@ -25,6 +26,10 @@ GLuint Shader::GetProjectionLocation() {
 
 GLuint Shader::GetModelLocation() {
     return uniformModelId;
+}
+
+GLuint Shader::GetViewMatrixLocation() {
+    return uniformViewModelId;
 }
 
 std::string Shader::ReadFile(const char *fileName) {
@@ -98,6 +103,7 @@ void Shader::CompileShader(const char *vertexCode, const char *fragmentCode) {
 
     uniformModelId = glGetUniformLocation(mShaderId, "modelMatrix");
     uniformProjectionId = glGetUniformLocation(mShaderId, "projectionMatrix");
+    uniformViewModelId = glGetUniformLocation(mShaderId, "viewMatrix");
 }
 
 void Shader::AddShader(GLuint program, const char *shaderCode, GLenum shaderType) {

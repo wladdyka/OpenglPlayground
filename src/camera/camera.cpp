@@ -1,0 +1,70 @@
+//
+// Created by Vlad M on 02.11.2024.
+//
+
+#include "camera.h"
+
+
+Camera::Camera():
+    mPosition{glm::vec3(0.0f, 0.0f, 0.0f)},
+    mWorldUp{glm::vec3(0.0f, 1.0f, 0.0f)},
+    mYaw{90.0f},
+    mPitch{0.0f},
+    mMoveSpeed{0.5f},
+    mTurnSpeed{1.0f}
+{ }
+
+Camera::Camera(
+    glm::vec3 position,
+    glm::vec3 worldUp,
+    GLfloat yaw,
+    GLfloat pitch,
+    GLfloat moveSpeed,
+    GLfloat turnSpeed
+) {
+    mPosition = position;
+    mWorldUp = worldUp;
+    mYaw = yaw;
+    mPitch = pitch;
+    mFront = glm::vec3(0.0f, 0.0f, -1.0f);
+    mMoveSpeed = moveSpeed;
+    mTurnSpeed = turnSpeed;
+
+    Update();
+}
+
+Camera::~Camera() {
+}
+
+
+void Camera::KeyControl(bool *keys) {
+    if (keys[GLFW_KEY_W]) {
+        mPosition += mFront * mMoveSpeed;
+    }
+
+    if (keys[GLFW_KEY_S]) {
+        mPosition -= mFront * mMoveSpeed;
+    }
+
+    if (keys[GLFW_KEY_A]) {
+        mPosition -= mRight * mMoveSpeed;
+    }
+
+    if (keys[GLFW_KEY_D]) {
+        mPosition += mRight * mMoveSpeed;
+    }
+}
+
+glm::mat4 Camera::GetViewMatrix() {
+    return glm::lookAt(mPosition, mPosition + mFront, mUp);
+}
+
+void Camera::Update() {
+    mFront.x = cos(glm::radians(mYaw)) * cos(glm::radians(mPitch));
+    mFront.y = sin(glm::radians(mPitch));
+    mFront.z = sin(glm::radians(mYaw)) * cos(glm::radians(mPitch));
+    mFront = glm::normalize(mFront);
+
+    mRight = glm::normalize(glm::cross(mFront, mWorldUp));
+    mUp = glm::normalize(glm::cross(mRight, mFront));
+}

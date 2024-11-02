@@ -15,7 +15,9 @@ add_executable(${PROJECT_NAME}
         src/shader/Shader.cpp
         src/shader/Shader.h
         src/window/window.cpp
-        src/window/window.h)
+        src/window/window.h
+        src/camera/camera.cpp
+        src/camera/camera.h)
 target_link_libraries(${PROJECT_NAME} PRIVATE GLEW::GLEW)
 target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
 target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)

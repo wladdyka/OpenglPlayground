@@ -10,6 +10,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "camera/camera.h"
 #include "mesh/mesh.h"
 #include "shader/shader.h"
 #include "window/window.h"
@@ -19,6 +20,7 @@ const float toRadians = 3.14159265f / 180.0f;
 Window mainWindow = Window();
 std::vector<Mesh*> meshes;
 std::vector<Shader*> shaders;
+Camera camera;
 
 const char* vertexPath = "shaders/vertex.glsl";
 const char* fragmentPath = "shaders/fragment.glsl";
@@ -59,6 +61,8 @@ int main() {
     CreateObjects();
     CreateShaders();
 
+    camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, 0.0f, 0.5f, 1.0f);
+
     glm::mat4 projectionMatrix = glm::perspective(
         45.0f,
         (GLfloat)mainWindow.getBufferWidth() / (GLfloat)mainWindow.getBufferHeight(),
@@ -70,6 +74,8 @@ int main() {
     while(!mainWindow.getShouldClose()) {
         // get and handle user input events
         glfwPollEvents();
+
+        camera.KeyControl(mainWindow.getKeys());
 
         // clear window
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -84,6 +90,7 @@ int main() {
 
         glUniformMatrix4fv(shaders[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(modelMatrix));
         glUniformMatrix4fv(shaders[0]->GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+        glUniformMatrix4fv(shaders[0]->GetViewMatrixLocation(), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
 
         meshes[0]->RenderMesh();
 

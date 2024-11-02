@@ -13,8 +13,10 @@ public:
 
     void CreateFromString(const char* vertexCode, const char* fragmentCode);
     void CreateFromFiles(const char* vertexPath, const char* fragmentPath);
+
     GLuint GetProjectionLocation();
     GLuint GetModelLocation();
+    GLuint GetViewMatrixLocation();
 
     std::string ReadFile(const char* fileName);
 
@@ -22,7 +24,7 @@ public:
     void ClearShader();
 
 private:
-    GLuint mShaderId, uniformProjectionId, uniformModelId;
+    GLuint mShaderId, uniformProjectionId, uniformModelId, uniformViewModelId;
 
     void CompileShader(const char* vertexCode, const char* fragmentCode);
     void AddShader(GLuint program, const char* shaderCode, GLenum shaderType);
