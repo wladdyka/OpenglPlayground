@@ -12,6 +12,7 @@ public:
     ~Camera();
 
     void KeyControl(bool* keys, GLfloat deltaTime);
+    void MouseControl(GLfloat changeX, GLfloat changeY);
     glm::mat4 GetViewMatrix();
 
 private:

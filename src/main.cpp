@@ -63,7 +63,7 @@ int main() {
     CreateObjects();
     CreateShaders();
 
-    camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 5.0f, 1.0f);
+    camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 5.0f, 0.2f);
 
     glm::mat4 projectionMatrix = glm::perspective(
         45.0f,
@@ -82,6 +82,7 @@ int main() {
         glfwPollEvents();
 
         camera.KeyControl(mainWindow.getKeys(), deltaTime);
+        camera.MouseControl(mainWindow.getChangeX(), mainWindow.getChangeY());
 
         // clear window
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

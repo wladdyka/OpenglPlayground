@@ -57,6 +57,24 @@ void Camera::KeyControl(bool *keys, GLfloat deltaTime) {
     }
 }
 
+void Camera::MouseControl(GLfloat changeX, GLfloat changeY) {
+    changeX *= mTurnSpeed;
+    changeY *= mTurnSpeed;
+
+    mYaw += changeX;
+    mPitch += changeY;
+
+    if (mPitch > 89.0f) {
+        mPitch = 89.0f;
+    }
+
+    if (mPitch < -89.0f) {
+        mPitch = -89.0f;
+    }
+
+    Update();
+}
+
 glm::mat4 Camera::GetViewMatrix() {
     return glm::lookAt(mPosition, mPosition + mFront, mUp);
 }
