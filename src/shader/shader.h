@@ -31,9 +31,18 @@ public:
     void ClearShader();
 
 private:
+    int mPointLightCount;
+
     GLuint mShaderId, uniformProjectionId, uniformModelId, uniformViewModelId;
-    GLuint uniformAmbientColorId, uniformAmbientIntensityId, uniformDiffuseIntensityId, uniformDirectionId;
     GLuint uniformEyePositionId, uniformSpecularIntensityId, uniformShininessId;
+
+    struct {
+        GLuint uniformColor;
+        GLuint uniformAmbientIntensity;
+        GLuint uniformDiffuseIntensity;
+
+        GLuint uniformDirection;
+    } uniformDirectionalLight;
 
     void CompileShader(const char* vertexCode, const char* fragmentCode);
     void AddShader(GLuint program, const char* shaderCode, GLenum shaderType);

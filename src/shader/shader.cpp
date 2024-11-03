@@ -33,19 +33,19 @@ GLuint Shader::GetViewMatrixLocation() {
 }
 
 GLuint Shader::GetAmbientIntensityLocation() {
-    return uniformAmbientIntensityId;
+    return uniformDirectionalLight.uniformAmbientIntensity;
 }
 
 GLuint Shader::GetAmbientColorLocation() {
-    return uniformAmbientColorId;
+    return uniformDirectionalLight.uniformColor;
 }
 
 GLuint Shader::GetDiffuseIntensityLocation() {
-    return uniformDiffuseIntensityId;
+    return uniformDirectionalLight.uniformDiffuseIntensity;
 }
 
 GLuint Shader::GetDirectionLocation() {
-    return uniformDirectionId;
+    return uniformDirectionalLight.uniformDirection;
 }
 
 GLuint Shader::GetEyePositionLocation() {
@@ -132,10 +132,12 @@ void Shader::CompileShader(const char *vertexCode, const char *fragmentCode) {
     uniformModelId = glGetUniformLocation(mShaderId, "modelMatrix");
     uniformProjectionId = glGetUniformLocation(mShaderId, "projectionMatrix");
     uniformViewModelId = glGetUniformLocation(mShaderId, "viewMatrix");
-    uniformAmbientColorId = glGetUniformLocation(mShaderId, "directionalLight.color");
-    uniformAmbientIntensityId = glGetUniformLocation(mShaderId, "directionalLight.ambientIntensity");
-    uniformDiffuseIntensityId = glGetUniformLocation(mShaderId, "directionalLight.diffuseIntensity");
-    uniformDirectionId = glGetUniformLocation(mShaderId, "directionalLight.direction");
+
+    uniformDirectionalLight.uniformColor = glGetUniformLocation(mShaderId, "directionalLight.color");
+    uniformDirectionalLight.uniformAmbientIntensity = glGetUniformLocation(mShaderId, "directionalLight.ambientIntensity");
+    uniformDirectionalLight.uniformDiffuseIntensity = glGetUniformLocation(mShaderId, "directionalLight.diffuseIntensity");
+    uniformDirectionalLight.uniformDirection = glGetUniformLocation(mShaderId, "directionalLight.direction");
+
     uniformEyePositionId = glGetUniformLocation(mShaderId, "eyePosition");
     uniformSpecularIntensityId = glGetUniformLocation(mShaderId, "material.specularIntensity");
     uniformShininessId = glGetUniformLocation(mShaderId, "material.shininess");

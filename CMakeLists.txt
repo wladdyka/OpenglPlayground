@@ -26,7 +26,9 @@ add_executable(${PROJECT_NAME}
         src/material/material.cpp
         src/material/material.h
         src/light/directionallight.cpp
-        src/light/directionallight.h)
+        src/light/directionallight.h
+        src/light/pointlight.cpp
+        src/light/pointlight.h)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE GLEW::GLEW)
 target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
