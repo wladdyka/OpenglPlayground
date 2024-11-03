@@ -138,7 +138,7 @@ int main() {
     dirtTexture.LoadTexture();
     plainTexture.LoadTexture();
 
-    shinyMaterial = Material(1.0f, 256);
+    shinyMaterial = Material(4.0f, 256);
     dullMaterial = Material(0.3f, 4);
 
     mainLight = DirectionalLight(
@@ -217,9 +217,7 @@ int main() {
         // first pyramid
         glm::mat4 modelMatrix = glm::mat4(1.0f);
         modelMatrix = glm::translate(modelMatrix, glm::vec3(1.0f, 0.0f, -5.0f));
-
         glUniformMatrix4fv(shaders[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(modelMatrix));
-
         brickTexture.UseTexture();
         shinyMaterial.UseMaterial(shaders[0]->GetSpecularIntensityLocation(), shaders[0]->GetShininessLocation());
         meshes[0]->RenderMesh();
@@ -227,10 +225,7 @@ int main() {
         // second pyramid
         modelMatrix = glm::mat4(1.0f);
         modelMatrix = glm::translate(modelMatrix, glm::vec3(-1.0f, 0.0f, -5.0f));
-
         glUniformMatrix4fv(shaders[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(modelMatrix));
-        glUniformMatrix4fv(shaders[0]->GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
-
         dirtTexture.UseTexture();
         dullMaterial.UseMaterial(shaders[0]->GetSpecularIntensityLocation(), shaders[0]->GetShininessLocation());
         meshes[1]->RenderMesh();
@@ -238,10 +233,7 @@ int main() {
         // floor object
         modelMatrix = glm::mat4(1.0f);
         modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -2.0f, 0.0f));
-
         glUniformMatrix4fv(shaders[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(modelMatrix));
-        glUniformMatrix4fv(shaders[0]->GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
-
         plainTexture.UseTexture();
         shinyMaterial.UseMaterial(shaders[0]->GetSpecularIntensityLocation(), shaders[0]->GetShininessLocation());
         meshes[2]->RenderMesh();

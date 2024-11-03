@@ -171,7 +171,7 @@ void Shader::CompileShader(const char *vertexCode, const char *fragmentCode) {
     uniformSpecularIntensityId = glGetUniformLocation(mShaderId, "material.specularIntensity");
     uniformShininessId = glGetUniformLocation(mShaderId, "material.shininess");
 
-    uniformPointLightCount = glGetUniformLocation(mShaderId, "pointLightCount");
+    uniformPointLightCount = glGetUniformLocation(mShaderId, "pointLightsCount");
 
     for(unsigned int i = 0; i < MAX_POINT_LIGHTS; i++) {
         char locationBuffer[100] = {'\0'};
