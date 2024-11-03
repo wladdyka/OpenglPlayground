@@ -46,7 +46,7 @@ uniform vec3 eyePosition;
 vec4 CalcLightByDirection(Light light, vec3 direction) {
     vec4 ambientColor = vec4(light.color, 1.0f) * light.ambientIntensity;
     float diffuseFactor = max(dot(normalize(Normal), normalize(direction)), 0.0f);
-    vec4 diffuseColor = vec4(light.color, 1.0f) * light.diffuseIntensity * diffuseFactor;
+    vec4 diffuseColor = vec4(light.color * light.diffuseIntensity * diffuseFactor, 1.0f);
 
     vec4 specularColor = vec4(0, 0, 0, 0);
 
