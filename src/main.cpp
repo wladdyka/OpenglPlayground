@@ -44,8 +44,7 @@ void calcAverageNormals(
     unsigned int vLength,
     unsigned int normalOffset
 ) {
-    for (size_t i = 0; i < indiceCount; i += 3)
-    {
+    for (size_t i = 0; i < indiceCount; i += 3) {
         unsigned int in0 = indices[i] * vLength;
         unsigned int in1 = indices[i + 1] * vLength;
         unsigned int in2 = indices[i + 2] * vLength;
@@ -60,8 +59,7 @@ void calcAverageNormals(
         vertices[in2] += normal.x; vertices[in2 + 1] += normal.y; vertices[in2 + 2] += normal.z;
     }
 
-    for (size_t i = 0; i < verticeCount / vLength; i++)
-    {
+    for (size_t i = 0; i < verticeCount / vLength; i++) {
         unsigned int nOffset = i * vLength + normalOffset;
         glm::vec3 vec(vertices[nOffset], vertices[nOffset + 1], vertices[nOffset + 2]);
         vec = glm::normalize(vec);
@@ -84,7 +82,7 @@ void CreateObjects() {
         1.0f, -1.0f, 0.0f,		1.0f, 0.0f,		0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f,		0.5f, 1.0f,		0.0f, 0.0f, 0.0f
     };
-    
+
     calcAverageNormals(indices, 12, vertices, 32, 8, 5);
 
     auto *obj1 = new Mesh();
