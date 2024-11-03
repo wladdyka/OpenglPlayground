@@ -48,6 +48,18 @@ GLuint Shader::GetDirectionLocation() {
     return uniformDirectionId;
 }
 
+GLuint Shader::GetEyePositionLocation() {
+    return uniformEyePositionId;
+}
+
+GLuint Shader::GetSpecularIntensityLocation() {
+    return uniformSpecularIntensityId;
+}
+
+GLuint Shader::GetShininessLocation() {
+    return uniformShininessId;
+}
+
 std::string Shader::ReadFile(const char *fileName) {
     std::string content;
     std::ifstream fileStream(fileName, std::ios::in);
@@ -124,6 +136,9 @@ void Shader::CompileShader(const char *vertexCode, const char *fragmentCode) {
     uniformAmbientIntensityId = glGetUniformLocation(mShaderId, "directionalLight.ambientIntensity");
     uniformDiffuseIntensityId = glGetUniformLocation(mShaderId, "directionalLight.diffuseIntensity");
     uniformDirectionId = glGetUniformLocation(mShaderId, "directionalLight.direction");
+    uniformEyePositionId = glGetUniformLocation(mShaderId, "eyePosition");
+    uniformSpecularIntensityId = glGetUniformLocation(mShaderId, "material.specularIntensity");
+    uniformShininessId = glGetUniformLocation(mShaderId, "material.shininess");
 }
 
 void Shader::AddShader(GLuint program, const char *shaderCode, GLenum shaderType) {

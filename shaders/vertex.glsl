@@ -7,6 +7,7 @@ layout (location = 2) in vec3 norm;
 out vec4 vertexColor;
 out vec2 texCoord;
 out vec3 Normal;
+out vec3 FragPos;
 
 uniform mat4 modelMatrix;
 uniform mat4 projectionMatrix;
@@ -17,4 +18,5 @@ void main() {
     vertexColor = vec4(clamp(pos, 0.0f, 1.0f), 1.0f);
     texCoord = tex;
     Normal = mat3(transpose(inverse(modelMatrix))) * norm;
+    FragPos = (modelMatrix * vec4(pos, 1.0)).xyz;
 }

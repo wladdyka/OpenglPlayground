@@ -10,10 +10,10 @@ public:
     ~Light();
 
     void UseLight(
-        GLfloat intensityUniformLocation,
-        GLfloat ambientColorUniformLocation,
-        GLfloat diffuseIntensityUniformLocation,
-        GLfloat directionUniformLocation
+        GLuint intensityUniformLocation,
+        GLuint ambientColorUniformLocation,
+        GLuint diffuseIntensityUniformLocation,
+        GLuint directionUniformLocation
     );
 private:
     glm::vec3 mColor{};

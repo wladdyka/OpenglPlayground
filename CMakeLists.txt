@@ -22,7 +22,9 @@ add_executable(${PROJECT_NAME}
         src/texture/texture.cpp
         src/texture/texture.h
         src/light/light.cpp
-        src/light/light.h)
+        src/light/light.h
+        src/material/material.cpp
+        src/material/material.h)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE GLEW::GLEW)
 target_link_libraries(${PROJECT_NAME} PRIVATE glfw)

@@ -4,8 +4,8 @@
 
 Window::Window()
     : mWindow{},
-    mWidth{1920},
-    mHeight{1080},
+    mWidth{2048},
+    mHeight{1152},
     keys{false}
 { }
 
@@ -99,10 +99,10 @@ void Window::HandleKeys(GLFWwindow *window, int key, int scancode, int action, i
 
     if (key >= 0 && key < 1024 && action == GLFW_PRESS) {
         theWindow->keys[key] = true;
-        printf("Pressed key %d\n", key);
+        //printf("Pressed key %d\n", key);
     } else if (key >= 0 && key < 1024 && action == GLFW_RELEASE) {
         theWindow->keys[key] = false;
-        printf("Released key %d\n", key);
+        //printf("Released key %d\n", key);
     }
 }
 
@@ -120,5 +120,5 @@ void Window::HandleMouse(GLFWwindow *window, double xPos, double yPos) {
     theWindow->mLastX = xPos;
     theWindow->mLastY = yPos;
 
-    printf("Mouse moved at (%f, %f)\n", theWindow->mChangeX, theWindow->mChangeY);
+    //printf("Mouse moved at (%f, %f)\n", theWindow->mChangeX, theWindow->mChangeY);
 }
