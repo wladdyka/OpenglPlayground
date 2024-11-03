@@ -8,6 +8,7 @@ find_package(GLEW REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(Stb REQUIRED)
+find_package(assimp CONFIG REQUIRED)
 
 add_executable(${PROJECT_NAME}
         src/main.cpp
@@ -35,6 +36,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE GLEW::GLEW)
 target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
 target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
 target_include_directories(${PROJECT_NAME} PRIVATE ${Stb_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} PRIVATE assimp::assimp)
 
 # Post-build command to copy shaders/ folder
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
