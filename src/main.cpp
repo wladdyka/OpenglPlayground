@@ -131,11 +131,12 @@ int main() {
     camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 5.0f, 0.2f);
 
     brickTexture = Texture("textures/brick.png");
-    dirtTexture = Texture("textures/dirt.png");
-    plainTexture = Texture("textures/plain.png");
-
     brickTexture.LoadTexture();
+
+    dirtTexture = Texture("textures/dirt.png");
     dirtTexture.LoadTexture();
+
+    plainTexture = Texture("textures/plain.png");
     plainTexture.LoadTexture();
 
     shinyMaterial = Material(4.0f, 256);
@@ -158,7 +159,7 @@ int main() {
     0.0f,
     1.0f,
     0.4f,
-    1.0f,
+    0.5f,
     4.0f,
     0.0f,
     0.0f,
@@ -239,7 +240,6 @@ int main() {
         meshes[2]->RenderMesh();
 
         glUseProgram(0);
-
         mainWindow.SwapBuffers();
     }
 
