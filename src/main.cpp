@@ -13,7 +13,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "camera/camera.h"
-#include "light/light.h"
+#include "light/directionallight.h"
 #include "material/material.h"
 #include "mesh/mesh.h"
 #include "shader/shader.h"
@@ -33,7 +33,7 @@ Texture dirtTexture;
 Material shinyMaterial;
 Material dullMaterial;
 
-Light mainLight;
+DirectionalLight mainLight;
 
 GLfloat deltaTime = 0.0f, lastTime = 0.0f;
 
@@ -118,7 +118,7 @@ int main() {
     shinyMaterial = Material(1.0f, 32);
     dullMaterial = Material(0.3f, 4);
 
-    mainLight = Light(1.0f, 1.0f, 1.0f, 0.2f, 2.0f, -1.0f, -2.0f, 0.3f);
+    mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 0.1f, 0.3f, 0.0f, 0.0f, -1.0f);
 
     brickTexture.LoadTexture();
     dirtTexture.LoadTexture();
