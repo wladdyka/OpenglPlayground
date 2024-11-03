@@ -6,6 +6,8 @@
 
 #include <GL/glew.h>
 
+#include "../light/directionallight.h"
+
 class Shader {
 public:
     Shader();
@@ -24,6 +26,8 @@ public:
     GLuint GetEyePositionLocation();
     GLuint GetSpecularIntensityLocation();
     GLuint GetShininessLocation();
+
+    void SetDirectionalLight(DirectionalLight *light);
 
     std::string ReadFile(const char* fileName);
 

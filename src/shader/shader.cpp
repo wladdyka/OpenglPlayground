@@ -60,6 +60,15 @@ GLuint Shader::GetShininessLocation() {
     return uniformShininessId;
 }
 
+void Shader::SetDirectionalLight(DirectionalLight *light) {
+    light->UseLight(
+        uniformDirectionalLight.uniformAmbientIntensity,
+        uniformDirectionalLight.uniformColor,
+        uniformDirectionalLight.uniformDiffuseIntensity,
+        uniformDirectionalLight.uniformDirection
+    );
+}
+
 std::string Shader::ReadFile(const char *fileName) {
     std::string content;
     std::ifstream fileStream(fileName, std::ios::in);

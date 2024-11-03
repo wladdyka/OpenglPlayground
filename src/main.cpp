@@ -147,13 +147,7 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shaders[0]->UseShader();
-
-        mainLight.UseLight(
-            shaders[0]->GetAmbientIntensityLocation(),
-            shaders[0]->GetAmbientColorLocation(),
-            shaders[0]->GetDiffuseIntensityLocation(),
-            shaders[0]->GetDirectionLocation()
-        );
+        shaders[0]->SetDirectionalLight(&mainLight);
 
         auto cameraPos = camera.getCameraPosition();
         glUniformMatrix4fv(shaders[0]->GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
@@ -162,8 +156,6 @@ int main() {
 
         glm::mat4 modelMatrix = glm::mat4(1.0f);
         modelMatrix = glm::translate(modelMatrix, glm::vec3(1.0f, 0.0f, -5.0f));
-        // modelMatrix = glm::rotate(modelMatrix, toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
-        // modelMatrix = glm::scale(modelMatrix, glm::vec3(0.4f, 0.4f, 0.5f));
 
         glUniformMatrix4fv(shaders[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
