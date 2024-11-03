@@ -28,7 +28,8 @@ add_executable(${PROJECT_NAME}
         src/light/directionallight.cpp
         src/light/directionallight.h
         src/light/pointlight.cpp
-        src/light/pointlight.h)
+        src/light/pointlight.h
+        src/common.h)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE GLEW::GLEW)
 target_link_libraries(${PROJECT_NAME} PRIVATE glfw)

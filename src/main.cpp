@@ -29,11 +29,13 @@ Camera camera;
 
 Texture brickTexture;
 Texture dirtTexture;
+Texture plainTexture;
 
 Material shinyMaterial;
 Material dullMaterial;
 
 DirectionalLight mainLight;
+PointLight pointLights[MAX_POINT_LIGHTS];
 
 GLfloat deltaTime = 0.0f, lastTime = 0.0f;
 
@@ -87,6 +89,18 @@ void CreateObjects() {
          0.0f,  1.0f,  0.0f,	0.5f, 1.0f,	   0.0f, 0.0f, 0.0f
     };
 
+    unsigned int floorIndices[] = {
+        0, 2, 1,
+        1, 2, 3
+    };
+
+    GLfloat floorVertices[] = {
+        -10.0f, 0.0f, -10.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f,
+        10.0f, 0.0f, -10.0f, 10.0f, 0.0f, 0.0f, -1.0f, 0.0f,
+        -10.0f, 0.0f, 10.0f, 0.0f, 10.0f, 0.0f, -1.0f, 0.0f,
+        10.0f, 0.0f, 10.0f, 10.0f, 10.0f, 0.0f, -1.0f, 0.0f
+    };
+
     calcAverageNormals(indices, 12, vertices, 32, 8, 5);
 
     auto *obj1 = new Mesh();
@@ -96,6 +110,10 @@ void CreateObjects() {
     auto *obj2 = new Mesh();
     obj2->CreateMesh(vertices, indices, 32, 12);
     meshes.push_back(obj2);
+
+    auto *obj3 = new Mesh();
+    obj3->CreateMesh(floorVertices, floorIndices, 32, 6);
+    meshes.push_back(obj3);
 }
 
 void CreateShaders() {
@@ -114,14 +132,55 @@ int main() {
 
     brickTexture = Texture("textures/brick.png");
     dirtTexture = Texture("textures/dirt.png");
-
-    shinyMaterial = Material(1.0f, 32);
-    dullMaterial = Material(0.3f, 4);
-
-    mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 0.1f, 0.3f, 0.0f, 0.0f, -1.0f);
+    plainTexture = Texture("textures/plain.png");
 
     brickTexture.LoadTexture();
     dirtTexture.LoadTexture();
+    plainTexture.LoadTexture();
+
+    shinyMaterial = Material(1.0f, 256);
+    dullMaterial = Material(0.3f, 4);
+
+    mainLight = DirectionalLight(
+    1.0f,
+    1.0f,
+    1.0f,
+    0.1f,
+    0.1f,
+    0.0f,
+    0.0f,
+    -1.0f
+    );
+
+    unsigned int pointLightCount = 0;
+    pointLights[0] = PointLight(
+    0.0f,
+    0.0f,
+    1.0f,
+    0.4f,
+    1.0f,
+    4.0f,
+    0.0f,
+    0.0f,
+    0.3f,
+    0.2f,
+    0.1f
+    );
+    pointLightCount++;
+    pointLights[1] = PointLight(
+    0.0f,
+    1.0f,
+    0.0f,
+    1.0f,
+    1.0f,
+    -4.0f,
+    2.0f,
+    0.0f,
+    0.3f,
+    0.1f,
+    0.1f
+    );
+    pointLightCount++;
 
     glm::mat4 projectionMatrix = glm::perspective(
         45.0f,
@@ -148,12 +207,14 @@ int main() {
 
         shaders[0]->UseShader();
         shaders[0]->SetDirectionalLight(&mainLight);
+        shaders[0]->SetPointLights(pointLights, pointLightCount);
 
         auto cameraPos = camera.getCameraPosition();
         glUniformMatrix4fv(shaders[0]->GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
         glUniformMatrix4fv(shaders[0]->GetViewMatrixLocation(), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
         glUniform3f(shaders[0]->GetEyePositionLocation(), cameraPos.x, cameraPos.y, cameraPos.z);
 
+        // first pyramid
         glm::mat4 modelMatrix = glm::mat4(1.0f);
         modelMatrix = glm::translate(modelMatrix, glm::vec3(1.0f, 0.0f, -5.0f));
 
@@ -163,6 +224,7 @@ int main() {
         shinyMaterial.UseMaterial(shaders[0]->GetSpecularIntensityLocation(), shaders[0]->GetShininessLocation());
         meshes[0]->RenderMesh();
 
+        // second pyramid
         modelMatrix = glm::mat4(1.0f);
         modelMatrix = glm::translate(modelMatrix, glm::vec3(-1.0f, 0.0f, -5.0f));
 
@@ -172,6 +234,17 @@ int main() {
         dirtTexture.UseTexture();
         dullMaterial.UseMaterial(shaders[0]->GetSpecularIntensityLocation(), shaders[0]->GetShininessLocation());
         meshes[1]->RenderMesh();
+
+        // floor object
+        modelMatrix = glm::mat4(1.0f);
+        modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -2.0f, 0.0f));
+
+        glUniformMatrix4fv(shaders[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(modelMatrix));
+        glUniformMatrix4fv(shaders[0]->GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+
+        plainTexture.UseTexture();
+        shinyMaterial.UseMaterial(shaders[0]->GetSpecularIntensityLocation(), shaders[0]->GetShininessLocation());
+        meshes[2]->RenderMesh();
 
         glUseProgram(0);
 
