@@ -32,7 +32,9 @@ add_executable(${PROJECT_NAME}
         src/light/pointlight.h
         src/common.h
         src/light/spotlight.cpp
-        src/light/spotlight.h)
+        src/light/spotlight.h
+        src/model/model.cpp
+        src/model/model.h)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE GLEW::GLEW)
 target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
