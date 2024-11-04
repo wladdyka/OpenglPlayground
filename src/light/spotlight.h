@@ -1,12 +1,12 @@
 #pragma once
-#include "light.h"
+#include "pointlight.h"
 
-class PointLight : public Light {
+class SpotLight : PointLight {
 public:
-    PointLight();
-    ~PointLight();
+    SpotLight();
+    ~SpotLight();
 
-    PointLight(
+    SpotLight(
         GLfloat red,
         GLfloat green,
         GLfloat blue,
@@ -15,9 +15,13 @@ public:
         GLfloat posX,
         GLfloat posY,
         GLfloat posZ,
+        GLfloat dirX,
+        GLfloat dirY,
+        GLfloat dirZ,
         GLfloat constant,
         GLfloat linear,
-        GLfloat exponent
+        GLfloat exponent,
+        GLfloat edge
     );
 
     void UseLight(
@@ -25,13 +29,15 @@ public:
         GLuint ambientColorUniformLocation,
         GLuint diffuseIntensityUniformLocation,
         GLuint positionUniformLocation,
+        GLuint directionUniformLocation,
         GLuint constantLocation,
         GLuint linearLocation,
-        GLuint exponentLocation
+        GLuint exponentLocation,
+        GLuint edgeLocation
     );
 
-protected:
-    glm::vec3 mPosition{};
-    GLfloat mConstant{1.0f}, mLinear{0.0f}, mExponent{0.0f};
+private:
+    glm::vec3 mDirection{};
+    GLfloat mEdge{}, mProcEdge{};
 };
 

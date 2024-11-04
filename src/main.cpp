@@ -36,6 +36,7 @@ Material dullMaterial;
 
 DirectionalLight mainLight;
 PointLight pointLights[MAX_POINT_LIGHTS];
+SpotLight spotLights[MAX_SPOT_LIGHTS];
 
 GLfloat deltaTime = 0.0f, lastTime = 0.0f;
 
@@ -143,45 +144,37 @@ int main() {
     dullMaterial = Material(0.3f, 4);
 
     mainLight = DirectionalLight(
-    1.0f,
-    1.0f,
-    1.0f,
-    0.1f,
-    0.1f,
-    0.0f,
-    0.0f,
-    -1.0f
+    1.0f, 1.0f, 1.0f,
+    0.1f, 0.1f,
+    0.0f, 0.0f, -1.0f
     );
 
     unsigned int pointLightCount = 0;
     pointLights[0] = PointLight(
-    0.0f,
-    0.0f,
-    1.0f,
-    0.4f,
-    0.5f,
-    4.0f,
-    0.0f,
-    0.0f,
-    0.3f,
-    0.2f,
-    0.1f
+    0.0f, 0.0f, 1.0f,
+    0.4f, 0.3f,
+    4.0f, 0.0f, 0.0f,
+    0.3f, 0.2f, 0.1f
     );
     pointLightCount++;
     pointLights[1] = PointLight(
-    0.0f,
-    1.0f,
-    0.0f,
-    1.0f,
-    1.0f,
-    -4.0f,
-    2.0f,
-    0.0f,
-    0.3f,
-    0.1f,
-    0.1f
+    0.0f, 1.0f, 0.0f,
+    0.3f, 0.3f,
+    -4.0f, 2.0f, 0.0f,
+    0.3f, 0.1f, 0.1f
     );
     pointLightCount++;
+
+    unsigned int spotLightCount = 0;
+    spotLights[0] = SpotLight(
+    1.0f, 1.0f, 1.0f,
+    0.0f, 1.0f,
+    0.0f, 0.0f, 0.0f,
+    0.0f, -1.0f, 0.0f,
+    0.3f, 0.2f, 0.1f,
+    40.0f
+    );
+    spotLightCount++;
 
     glm::mat4 projectionMatrix = glm::perspective(
         45.0f,
@@ -209,6 +202,7 @@ int main() {
         shaders[0]->UseShader();
         shaders[0]->SetDirectionalLight(&mainLight);
         shaders[0]->SetPointLights(pointLights, pointLightCount);
+        shaders[0]->SetSpotLights(spotLights, spotLightCount);
 
         auto cameraPos = camera.getCameraPosition();
         glUniformMatrix4fv(shaders[0]->GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
@@ -235,7 +229,7 @@ int main() {
         modelMatrix = glm::mat4(1.0f);
         modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -2.0f, 0.0f));
         glUniformMatrix4fv(shaders[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(modelMatrix));
-        plainTexture.UseTexture();
+        dirtTexture.UseTexture();
         shinyMaterial.UseMaterial(shaders[0]->GetSpecularIntensityLocation(), shaders[0]->GetShininessLocation());
         meshes[2]->RenderMesh();
 
