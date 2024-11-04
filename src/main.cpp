@@ -7,6 +7,7 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <assimp/Importer.hpp>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -132,13 +133,13 @@ int main() {
     camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 5.0f, 0.2f);
 
     brickTexture = Texture("textures/brick.png");
-    brickTexture.LoadTexture();
+    brickTexture.LoadTextureAlpha();
 
     dirtTexture = Texture("textures/dirt.png");
-    dirtTexture.LoadTexture();
+    dirtTexture.LoadTextureAlpha();
 
     plainTexture = Texture("textures/plain.png");
-    plainTexture.LoadTexture();
+    plainTexture.LoadTextureAlpha();
 
     shinyMaterial = Material(4.0f, 256);
     dullMaterial = Material(0.3f, 4);
