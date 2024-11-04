@@ -24,6 +24,8 @@ public:
         GLfloat edge
     );
 
+    void SetPositionAndDirection(glm::vec3 position, glm::vec3 direction);
+
     void UseLight(
         GLuint intensityUniformLocation,
         GLuint ambientColorUniformLocation,

@@ -79,6 +79,10 @@ glm::vec3 Camera::getCameraPosition() {
     return mPosition;
 }
 
+glm::vec3 Camera::getCameraDirection() {
+    return glm::normalize(mFront);
+}
+
 glm::mat4 Camera::GetViewMatrix() {
     return glm::lookAt(mPosition, mPosition + mFront, mUp);
 }

@@ -168,11 +168,11 @@ int main() {
     unsigned int spotLightCount = 0;
     spotLights[0] = SpotLight(
     1.0f, 1.0f, 1.0f,
-    0.0f, 1.0f,
+    0.0f, 2.0f,
     0.0f, 0.0f, 0.0f,
     0.0f, -1.0f, 0.0f,
-    0.3f, 0.2f, 0.1f,
-    40.0f
+    1.0f, 0.0f, 0.0f,
+    20.0f
     );
     spotLightCount++;
 
@@ -205,6 +205,8 @@ int main() {
         shaders[0]->SetSpotLights(spotLights, spotLightCount);
 
         auto cameraPos = camera.getCameraPosition();
+        spotLights[0].SetPositionAndDirection(cameraPos, camera.getCameraDirection());
+
         glUniformMatrix4fv(shaders[0]->GetProjectionLocation(), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
         glUniformMatrix4fv(shaders[0]->GetViewMatrixLocation(), 1, GL_FALSE, glm::value_ptr(camera.GetViewMatrix()));
         glUniform3f(shaders[0]->GetEyePositionLocation(), cameraPos.x, cameraPos.y, cameraPos.z);
