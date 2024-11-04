@@ -17,6 +17,7 @@
 #include "light/directionallight.h"
 #include "material/material.h"
 #include "mesh/mesh.h"
+#include "model/model.h"
 #include "shader/shader.h"
 #include "window/window.h"
 #include "texture/texture.h"
@@ -34,6 +35,9 @@ Texture plainTexture;
 
 Material shinyMaterial;
 Material dullMaterial;
+
+Model xwing;
+Model blackHawk;
 
 DirectionalLight mainLight;
 PointLight pointLights[MAX_POINT_LIGHTS];
@@ -144,9 +148,15 @@ int main() {
     shinyMaterial = Material(4.0f, 256);
     dullMaterial = Material(0.3f, 4);
 
+    xwing = Model();
+    xwing.LoadModel("models/x-wing.obj");
+
+    blackHawk = Model();
+    blackHawk.LoadModel("models/uh60.obj");
+
     mainLight = DirectionalLight(
     1.0f, 1.0f, 1.0f,
-    0.1f, 0.1f,
+    0.2f, 0.4f,
     0.0f, 0.0f, -1.0f
     );
 
@@ -227,6 +237,23 @@ int main() {
         dirtTexture.UseTexture();
         dullMaterial.UseMaterial(shaders[0]->GetSpecularIntensityLocation(), shaders[0]->GetShininessLocation());
         meshes[1]->RenderMesh();
+
+        // xwing object
+        modelMatrix = glm::mat4(1.0f);
+        modelMatrix = glm::translate(modelMatrix, glm::vec3(-7.0f, 0.0f, 10.0f));
+        modelMatrix = glm::scale(modelMatrix, glm::vec3(0.006f, 0.006f, 0.006f));
+        glUniformMatrix4fv(shaders[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(modelMatrix));
+        shinyMaterial.UseMaterial(shaders[0]->GetSpecularIntensityLocation(), shaders[0]->GetShininessLocation());
+        xwing.RenderModel();
+
+        // blackHawk object
+        modelMatrix = glm::mat4(1.0f);
+        modelMatrix = glm::translate(modelMatrix, glm::vec3(-2.0f, 0.0f, 4.0f));
+        modelMatrix = glm::rotate(modelMatrix, -90.0f * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+        modelMatrix = glm::scale(modelMatrix, glm::vec3(0.2f, 0.2f, 0.2f));
+        glUniformMatrix4fv(shaders[0]->GetModelLocation(), 1, GL_FALSE, glm::value_ptr(modelMatrix));
+        shinyMaterial.UseMaterial(shaders[0]->GetSpecularIntensityLocation(), shaders[0]->GetShininessLocation());
+        blackHawk.RenderModel();
 
         // floor object
         modelMatrix = glm::mat4(1.0f);
