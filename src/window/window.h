@@ -34,4 +34,6 @@ private:
     void CreateCallbacks();
     static void HandleKeys(GLFWwindow* window, int key, int scancode, int action, int mode);
     static void HandleMouse(GLFWwindow* window, double xPos, double yPos);
+    static void HandleWindowSize(GLFWwindow* window, int width, int height);
+    static void HandleFrameBufferSize(GLFWwindow* window, int width, int height);
 };

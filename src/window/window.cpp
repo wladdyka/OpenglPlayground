@@ -4,8 +4,8 @@
 
 Window::Window()
     : mWindow{},
-    mWidth{2048},
-    mHeight{1152},
+    mWidth{1920},
+    mHeight{1080},
     keys{false}
 { }
 
@@ -38,12 +38,16 @@ int Window::Init() {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
+    //glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GL_FALSE);
+
     mWindow = glfwCreateWindow(mWidth, mHeight, "OpenGL Playground", nullptr, nullptr);
     if (!mWindow) {
         printf("Failed to create GLFW window\n");
         glfwTerminate();
         return 1;
     }
+
+    glfwPollEvents();
 
     // get buffer size information
     glfwGetFramebufferSize(mWindow, &mBufferWidth, &mBufferHeight);
@@ -87,8 +91,19 @@ GLfloat Window::getChangeY() {
 }
 
 void Window::CreateCallbacks() {
+    glfwSetFramebufferSizeCallback(mWindow, HandleFrameBufferSize);
+    glfwSetWindowSizeCallback(mWindow, HandleWindowSize);
     glfwSetKeyCallback(mWindow, HandleKeys);
     glfwSetCursorPosCallback(mWindow, HandleMouse);
+}
+
+void Window::HandleWindowSize(GLFWwindow* window, int width, int height) {
+    printf("Window::HandleWindowSize %d %d \n", width, height);
+    glViewport(0, 0, width, height);
+}
+
+void Window::HandleFrameBufferSize(GLFWwindow *window, int width, int height) {
+    printf("Window::HandleFrameBufferSize %d %d \n", width, height);
 }
 
 void Window::HandleKeys(GLFWwindow *window, int key, int scancode, int action, int mode) {
